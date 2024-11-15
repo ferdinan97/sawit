@@ -41,6 +41,7 @@ class incomeRepository
         DB::beginTransaction();
         try {
             $data = [
+                'date' => $request->date,
                 'description' => $request->description,
                 'price_per_kg' => $request->price_per_kg,
                 'total_weight' => $request->total_weight,
@@ -71,6 +72,7 @@ class incomeRepository
         DB::beginTransaction();
         try {
             $data = [
+                'date' => $request->date,
                 'description' => $request->description,
                 'price_per_kg' => $request->price_per_kg,
                 'total_weight' => $request->total_weight,
