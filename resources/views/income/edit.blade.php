@@ -3,9 +3,9 @@
 <div class="pagetitle mt-4 d-md-block d-none" style="margin-left:30px">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
-            <a href="{{ url('/staff') }}">Expense</a>
+            <a href="{{ url('/staff') }}">Income</a>
         </li>
-        <li class="breadcrumb-item active">Add New</li>
+        <li class="breadcrumb-item active">Edit</li>
     </ol>
 </div>
 @endsection
@@ -17,51 +17,33 @@
             <div class="card-body mt-4 px-4">
                 <form id="formData" method="POST" class="row g-3" enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" name="id" value="{{$expense->id}}">
-                    <div class="col-md">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" name="name" class="form-control mb-2" id="name" required value="{{$expense->name}}">
-                    </div>
 
-                    <div class="col-md">
+                    <input type="hidden" name="id" value='{{$income->id}}'>
+
+                    <div class="col-md-12">
                         <label for="date" class="form-label">Date</label>
-                        <input type="date" name="date" class="form-control mb-2" id="date" required value="{{$expense->date}}">
+                        <input type="date" name="date" class="form-control mb-2" id="date" value='{{$income->date}}' required>
                     </div>
 
                     <div class="col-md-12">
                         <label for="description" class="form-label">Description</label>
-                        <textarea name="description" class="form-control mb-2" id="description" rows="5" required> {{$expense->description}} </textarea>
+                        <textarea name="description" class="form-control mb-2" id="description" rows="4"> {{$income->description}} </textarea>
                     </div>
 
-                    <div class="col-md-12" id="staff-container">
-                        <label class="col-md-12 mb-2" style="font-size:20pt;">Expense Detail</label>
-                        <button type="button" id="add-expense" class="btn btn-primary">Add Row</button>
-                        <div class="row">
-                            <table class="table" id="dynamic-table-feature">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Total</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($expense->Detail as $key=> $detail)
-                                    <tr>
-                                        <td>
-                                            <input type="text" class="form-control" name="item_name[]" value="{{$detail->name}}">
-                                            <input type="hidden" class="form-control" name="item_id[]" value="{{$detail->id}}">
-                                        </td>
-                                        <td>
-                                            <input type="number" inputmode="numeric" class="form-control" name="total_item[]" value="{{$detail->total}}">
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="col-md">
+                        <label for="total_weight" class="form-label">Total Weight</label>
+                        <input type="number" name="total_weight" class="form-control mb-2" id="total_weight" value='{{$income->total_weight}}' required>
                     </div>
 
+                    <div class="col-md">
+                        <label for="name" class="form-label">Price Per Kg</label>
+                        <input type="number" name="price_per_kg" class="form-control mb-2" id="price_per_kg" value='{{$income->price_per_kg}}' required>
+                    </div>
+
+                    <div class="col-md">
+                        <label for="name" class="form-label">Total</label>
+                        <input type="number" name="total" class="form-control mb-2" id="total" value='{{$income->total}}' readonly required>
+                    </div>
 
                     <div class="mb-3" style="display: flex; justify-content: flex-end;">
                         <div class="d-flex justify-content-center">
@@ -88,6 +70,16 @@
 @endpush
 @push('js')
 <script>
+    document.getElementById('total_weight').addEventListener('input', calculateTotal);
+    document.getElementById('price_per_kg').addEventListener('input', calculateTotal);
+
+    function calculateTotal() {
+        const totalWeight = parseFloat(document.getElementById('total_weight').value) || 0;
+        const pricePerKg = parseFloat(document.getElementById('price_per_kg').value) || 0;
+        const total = totalWeight * pricePerKg;
+        document.getElementById('total').value = total.toFixed(2);
+    }
+
     $(document).ready(function() {
         $('#formData').on('submit', function(e) {
             $('.spinner-border').show();
@@ -100,7 +92,7 @@
             var formData = new FormData(this);
 
             $.ajax({
-                url: "{{ route('update_expense') }}",
+                url: "{{ route('update_income') }}",
                 type: "POST",
                 data: formData,
                 cache: false,
@@ -109,11 +101,11 @@
                 success: function(res) {
                     $('.spinner-border').hide();
                     if (res.status) {
-                        swal("Success", "Expense Berhasil Di Tambahkan!", "success", {
+                        swal("Success", "Income Berhasil Di Ubah!", "success", {
                             buttons: false,
                             timer: 2000,
                         }).then((value) => {
-                            var redirect_url = "{{ route('index_expense') }}"
+                            var redirect_url = "{{ route('index_income') }}"
                             window.location.href = redirect_url;
                         });
                     } else {
@@ -132,25 +124,5 @@
         })
     });
 
-    document.getElementById('add-expense').addEventListener('click', function() {
-        var tableBody = document.querySelector('#dynamic-table-feature tbody');
-        var newRow = tableBody.insertRow();
-
-        var cell1 = newRow.insertCell();
-        cell1.innerHTML = `<input type="text" name="item_name[]" class="form-control mb-2" id="item_name" required>
-        
-        <input type="hidden" name="item_id[]" class="form-control mb-2" id="item_name" required value="0">`;
-
-        var cell2 = newRow.insertCell();
-        cell2.innerHTML = `<input type="text" inputmode="numeric" class="form-control" name="total_item[]">`;
-
-        var cell3 = newRow.insertCell();
-        cell3.innerHTML = `<button class="btn btn-danger col-md-12 delete-row" style="border-radius: 50%;width:50px;" type="button" onclick="removeRow(this);">X</button>`;
-    });
-
-    function removeRow(button) {
-        var row = button.closest('tr'); // Find the closest <tr> element
-        row.remove(); // Remove the row
-    }
 </script>
 @endpush

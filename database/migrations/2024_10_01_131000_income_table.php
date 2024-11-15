@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create('income', function (Blueprint $table) {
             $table->id();
+            $table->date('date')->nullable();
+            $table->text('description')->nullable();
             $table->integer('total_weight');
             $table->integer('price_per_kg');
+            $table->integer('total');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
             $table->softDeletes();

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ReportController;
 
 /*
@@ -71,13 +72,13 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::prefix('income')->group(function () {
-        Route::get('/', [ExpenseController::class, 'index'])->name('index_expense');
-        Route::get('/data', [ExpenseController::class, 'data'])->name('data_report');
-        Route::get('/add', [ExpenseController::class, 'add'])->name('add_expense');
-        Route::post('/insert', [ExpenseController::class, 'store'])->name('insert_expense');
-        Route::get('/edit/{id}', [ExpenseController::class, 'edit'])->name('edit_expense');
-        Route::post('/update', [ExpenseController::class, 'update'])->name('update_expense');
-        Route::delete('/delete/{id}', [ExpenseController::class, 'delete'])->name('delete_expense');
+        Route::get('/', [IncomeController::class, 'index'])->name('index_income');
+        Route::get('/data', [IncomeController::class, 'data'])->name('data_report');
+        Route::get('/add', [IncomeController::class, 'add'])->name('add_income');
+        Route::post('/insert', [IncomeController::class, 'store'])->name('insert_income');
+        Route::get('/edit/{id}', [IncomeController::class, 'edit'])->name('edit_income');
+        Route::post('/update', [IncomeController::class, 'update'])->name('update_income');
+        Route::delete('/delete/{id}', [IncomeController::class, 'delete'])->name('delete_income');
     });
 
 });
