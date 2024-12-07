@@ -46,33 +46,41 @@
 @push('js')
 <script>
     $(document).ready(function() {
-        getData();
+        searchData();
+        $(document).on('click', '.pagination a', function(event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            searchData(page);
+        })
     })
 
-    function getData() {
-        $.ajax({
-            url: `/expense/data`,
-            method: 'GET',
-            beforeSend: function(e) {
-                $('#overlay').css("display", "block");
-            },
-            success: function(data) {
-                $('#overlay').css("display", "none");
-                console.log(data);
-                $('#data').html(data);
-            },
-            error: function(error) {
-                $('#overlay').css("display", "none");
-                toastr['error']('Something Error');
-            }
-        })
-    }
+    // function getData() {
+    //     $.ajax({
+    //         url: `/expense/data`,
+    //         method: 'GET',
+    //         beforeSend: function(e) {
+    //             $('#overlay').css("display", "block");
+    //         },
+    //         success: function(data) {
+    //             $('#overlay').css("display", "none");
+    //             console.log(data);
+    //             $('#data').html(data);
+    //         },
+    //         error: function(error) {
+    //             $('#overlay').css("display", "none");
+    //             toastr['error']('Something Error');
+    //         }
+    //     })
+    // }
 
-    function searchData() {
+    function searchData(page) {
+        if (!page || page === '0') {
+            page = 1;
+        }
         var name = $('#name').val();
         var date = $('#date').val();
         $.ajax({
-            url: `/expense/data?name=${name}&date=${date}`,
+            url: `/expense/data?name=${name}&date=${date}&page=${page}`,
             method: 'GET',
             beforeSend: function(e) {
                 $('#overlay').css("display", "block");

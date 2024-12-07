@@ -10,11 +10,11 @@ class workHistoryRepository
 {
     function getRequestFilter($data, $request)
     {
-        if (isset($request['name'])) {
-            $data = $data->where('name', $request['name']);
+        if (isset($request['name']) && $request['name'] !== null) {
+            $data = $data->where('name','like', "%{$request['name']}%");
         }
 
-        if (isset($request['date'])) {
+        if (isset($request['date']) && $request['date'] !== null) {
             $data = $data->where('date', $request['date']);
         }
 
@@ -38,7 +38,7 @@ class workHistoryRepository
     function getWorkingHistoryList($request)
     {
         $data = WorkHistoryModel::with('Detail')->withCount('Detail')->orderByDesc('id');
-        $data = $this->getRequestFilter($data, $request);
+        $data = $this->getRequestFilter($data, $request);        
         $result = $data->paginate(10);
         return $result;
     }

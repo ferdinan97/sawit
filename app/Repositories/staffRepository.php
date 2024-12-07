@@ -10,8 +10,8 @@ class staffRepository
 {
     function getRequestFilter($data, $request)
     {
-        if (isset($request['name']) && $request['name'] != NULL) {
-            $data = $data->where('name', $request['name']);
+        if (isset($request['name']) && $request['name'] != null) {
+            $data = $data->where('name','like', "%{$request['name']}%");
         }
 
         return $data;

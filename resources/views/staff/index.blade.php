@@ -18,7 +18,7 @@
                         <a href="" style="margin-left:15px; margin-top:15px">
                             <i style="font-size:20px;" class="bi bi-search"></i>
                         </a>
-                        <input id="name" onkeyup="searchData()" style="border-color: white;-webkit-box-shadow: none!important;-moz-box-shadow: none!important;box-shadow: none!important;" type="text" class="form-control mt-2" placeholder="Search by name..." value="">
+                        <input id="name" onkeyup="getData()" style="border-color: white;-webkit-box-shadow: none!important;-moz-box-shadow: none!important;box-shadow: none!important;" type="text" class="form-control mt-2" placeholder="Search by name..." value="">
                         <a href="{{ route('add_staff') }}" type="button" style="padding-top:6px;margin-top:10px;margin-right:15px;height:35px;width: 200px" class="px-4 btn btn-sm btn-dark rounded-pill float-right ml-3">
                             Add New</a>
                     </div>
@@ -40,12 +40,17 @@
 <script>
     $(document).ready(function() {
         getData();
+        $(document).on('click', '.pagination a', function(event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            getData(page);
+        })
     })
 
-    function getData() {
+    function getData(page) {
         var name = $('#name').val();
         $.ajax({
-            url: `/staff/data?name=` + name,
+            url: `/staff/data?name=` + name + `&page=` + page,
             method: 'GET',
             beforeSend: function(e) {
                 $('#overlay').css("display", "block");

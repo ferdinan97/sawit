@@ -57,7 +57,7 @@
                 </div>
             </div>
 
-            <div class="data" id="data">
+            <div id="data">
                 <div class="d-flex justify-content-center">
                     <div class="spinner-border" role="status">
                         <span class="visually-hidden">Loading...</span>
@@ -71,33 +71,23 @@
 @push('js')
 <script>
     $(document).ready(function() {
-        getData();
+        searchData();
+        $(document).on('click', '.pagination a', function(event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            searchData(page);
+        })
     })
 
-    function getData() {
-        $.ajax({
-            url: `/work-history/list-data`,
-            method: 'GET',
-            beforeSend: function(e) {
-                $('#overlay').css("display", "block");
-            },
-            success: function(data) {
-                $('#overlay').css("display", "none");
-                console.log(data);
-                $('#data').html(data);
-            },
-            error: function(error) {
-                $('#overlay').css("display", "none");
-                toastr['error']('Something Error');
-            }
-        })
-    }
-
-    function searchData() {
+    function searchData(page) {
+        console.log("search data");
+        if (!page || page === '0') {
+            page = 1;
+        }
         var name = $('#name').val();
         var date = $('#date').val();
         $.ajax({
-            url: `/work-history/list-data?name=${name}&date=${date}`,
+            url: `/work-history/list-data?name=${name}&date=${date}&page=${page}`,
             method: 'GET',
             beforeSend: function(e) {
                 $('#overlay').css("display", "block");

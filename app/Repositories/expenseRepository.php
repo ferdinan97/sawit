@@ -14,11 +14,11 @@ class expenseRepository
 {
     function getRequestFilter($data, $request)
     {
-        if (isset($request['name'])) {
-            $data = $data->where('name', $request['name']);
+        if (isset($request['name']) && $request['name'] !== null) {
+            $data = $data->where('name','like', "%{$request['name']}%");
         }
 
-        if (isset($request['date'])) {
+        if (isset($request['date']) && $request['date'] !== null) {
             $data = $data->where('date', $request['date']);
         }
 
